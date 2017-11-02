@@ -13,6 +13,6 @@ public class MessagePrinter {
 	private MessageService messageService;
 	
 	public void printMessage() {
-		System.out.println(messageService.getMessage());
+		System.out.println("chen long fei, " + messageService.getMessage());
 	}
 }
