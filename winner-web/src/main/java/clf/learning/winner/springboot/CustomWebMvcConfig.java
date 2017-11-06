@@ -47,9 +47,11 @@ public class CustomWebMvcConfig extends WebMvcConfigurerAdapter {
 	}
 
 	//对静态资源的请求转发到容器缺省的servlet，而不使用DispatcherServlet
+	//会把"/**" url,注册到SimpleUrlHandlerMapping的urlMap中,
+	//把对静态资源的访问由HandlerMapping转到org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler处理并返回
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-		configurer.enable();
+		configurer.enable();  // =<mvc:default-servlet-handler/>  
 	}
 
 	@Override
