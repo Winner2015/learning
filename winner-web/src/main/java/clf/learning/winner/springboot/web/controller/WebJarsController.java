@@ -45,4 +45,5 @@ public class WebJarsController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 	}
+	
 }
