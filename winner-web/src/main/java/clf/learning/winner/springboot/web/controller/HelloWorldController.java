@@ -10,7 +10,7 @@ import clf.learning.winner.core.service.HelloWorldService;
  * @author chenlongfei
   */
 @RestController // = @ResponseBody ＋ @Controller
-public class Controller {
+public class HelloWorldController {
 	
 	@Autowired
 	private HelloWorldService helloWorldService;
