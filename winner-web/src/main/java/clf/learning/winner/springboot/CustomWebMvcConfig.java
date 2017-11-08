@@ -1,7 +1,5 @@
 package clf.learning.winner.springboot;
 
-import java.util.List;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -16,8 +14,6 @@ import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
-
-import com.google.common.collect.Lists;
 
 import clf.learning.winner.springboot.vo.MessageVO;
 import clf.learning.winner.springboot.web.interceptor.AccessLogInterceptor;

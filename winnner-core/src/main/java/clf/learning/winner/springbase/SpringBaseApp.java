@@ -15,6 +15,7 @@ public class SpringBaseApp {
 	public static void main(String [] args) {
 		
 		//AnnotationConfigApplicationContext 搭配上 @Configuration 和 @Bean 注解，可以替代传统的XML配置
+		@SuppressWarnings("resource")
 		ApplicationContext context = new AnnotationConfigApplicationContext(SpringBaseApp.class);
 		
 		HelloWorldService helloWorldService = context.getBean(HelloWorldService.class);

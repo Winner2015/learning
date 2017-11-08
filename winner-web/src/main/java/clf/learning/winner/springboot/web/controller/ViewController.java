@@ -27,6 +27,9 @@ public class ViewController {
 		return "message";
 	}
 	
-	
+	@RequestMapping("/message2")
+	public String message2() {
+		return "no-matched-view";
+	}
 	
 }

@@ -1,8 +1,11 @@
 package clf.learning.winner.springboot.vo;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * @author chenlongfei
   */
+@XmlRootElement(name="data")
 public class MessageVO {
 	private Long id;
 	private String name;
