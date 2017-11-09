@@ -4,28 +4,35 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author chenlongfei
-  */
-@XmlRootElement(name="data")
+ */
+@XmlRootElement(name = "message")
 public class MessageVO {
-	private Long id;
-	private String name;
-	private String message;
-	public Long getId() {
-		return id;
+	private String to;
+	private String from;
+	private String content;
+
+	public String getTo() {
+		return to;
 	}
-	public void setId(Long id) {
-		this.id = id;
+
+	public void setTo(String to) {
+		this.to = to;
 	}
-	public String getName() {
-		return name;
+
+	public String getFrom() {
+		return from;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setFrom(String from) {
+		this.from = from;
 	}
-	public String getMessage() {
-		return message;
+
+	public String getContent() {
+		return content;
 	}
-	public void setMessage(String message) {
-		this.message = message;
+
+	public void setContent(String content) {
+		this.content = content;
 	}
+
 }

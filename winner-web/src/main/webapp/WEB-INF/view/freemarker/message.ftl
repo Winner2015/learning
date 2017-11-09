@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JSP Page</title>
+<title>FreeMarker Page</title>
 </head>
 <body>
 	<table>
 		<tr>
-			<th>JSP Page</th>
+			<th>FreeMarker Page</th>
 		</tr>
 		<tr>
 			<td>发送方：${message.from}</td>

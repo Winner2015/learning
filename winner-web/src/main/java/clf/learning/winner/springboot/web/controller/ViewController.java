@@ -15,21 +15,54 @@ import clf.learning.winner.springboot.vo.MessageVO;
 public class ViewController {
 	
 	
-	@RequestMapping("/message/{id}")
-	public String message(@PathVariable("id") Long id, Model model) {
+	@RequestMapping("/message/{to}")
+	public String message(@PathVariable("to") String to, Model model) {
 		MessageVO message = new MessageVO();
-		message.setId(id);
-		message.setName("陈龙飞");
-		message.setMessage("师傅被妖怪抓走了");
+		message.setFrom("沙悟净");
+		message.setTo(to);
+		message.setContent("师傅被妖怪抓走了！");
 		
-		model.addAttribute("data", message);
+		model.addAttribute("message", message);
 		
 		return "message";
 	}
 	
-	@RequestMapping("/message2")
-	public String message2() {
-		return "no-matched-view";
+	
+	@RequestMapping("/messageJspOnly")
+	public String messageJsp(Model model) {
+		MessageVO message = new MessageVO();
+		message.setFrom("沙悟净");
+		message.setTo("大师兄");
+		message.setContent("师傅被妖怪抓走了！");
+		
+		model.addAttribute("message", message);
+		
+		return "messageJspOnly";  //该视图名只能匹配上jsp页面，而没有messageJspOnly.ftl页面
+	}
+	
+	
+	@RequestMapping("messageFtlOnly")
+	public String messageFtl(Model model) {
+		MessageVO message = new MessageVO();
+		message.setFrom("沙悟净");
+		message.setTo("二师兄");
+		message.setContent("师傅被妖怪抓走了！");
+		
+		model.addAttribute("message", message);
+		
+		return "messageFtlOnly";  //该视图名只能匹配上ftl页面，而没有messageFtlOnly.jsp页面
+	}
+	
+	@RequestMapping("messageNoPage")
+	public String messageNoPage(Model model) {
+		MessageVO message = new MessageVO();
+		message.setFrom("沙悟净");
+		message.setTo("二师兄");
+		message.setContent("师傅被妖怪抓走了！");
+		
+		model.addAttribute("message", message);
+		
+		return "messageNoPage";  //匹配不上任何页面
 	}
 	
 }

@@ -1,10 +1,12 @@
 package clf.learning.winner.springboot;
 
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import clf.learning.winner.springboot.web.servlet.ServletFromContextInitializer;
 import clf.learning.winner.springboot.web.servlet.ServletFromRegistrationBean;
@@ -26,5 +28,19 @@ public class ServletConfig {
 	public ServletContextInitializer registerServletByInitializer() {
 		return new ServletFromContextInitializer();
 	}
+	
+//	@Bean
+//	public FilterRegistrationBean filterRegistrationBean() {
+//		
+//        CharacterEncodingFilter filter = new CharacterEncodingFilter();
+//        filter.setEncoding("UTF-8");
+//        filter.setForceEncoding(true);
+//        
+//        FilterRegistrationBean registration = new FilterRegistrationBean();
+//        registration.setFilter(filter);
+//        registration.setOrder(-1);
+//        
+//        return registration;
+//	}
 	
 }

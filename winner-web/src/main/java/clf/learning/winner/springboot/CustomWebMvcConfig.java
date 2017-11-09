@@ -1,5 +1,6 @@
 package clf.learning.winner.springboot;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -12,6 +13,9 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
@@ -57,11 +61,20 @@ public class CustomWebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		/**
-		 * 对静态资源的请求转发到容器缺省的servlet，而不使用DispatcherServlet 会把"/**"
-		 * url,注册到SimpleUrlHandlerMapping的urlMap中,
-		 * 把对静态资源的访问由HandlerMapping转到org.springframework.web.servlet.resource.DefaultServletHttpRequestHandler处理并返回
+		 * 这个Handler也是用来处理静态文件的，它会尝试映射"/*"
+		 * 当DispatcherServelt映射/时（/ 和/* 是有区别的），并且没有找到合适的Handler来处理请求时，
+		 * 就会交给DefaultServletHttpRequestHandler 来处理
 		 */
-		configurer.enable();  // =<mvc:default-servlet-handler/>  
+		configurer.enable();  // =<mvc:default-servlet-handler/> 
+		
+		/**
+		 * '/' 和 '/*'的区别：
+		 * '/' 将会覆盖容器的default servlet, 找不到匹配的URL，才会交给该Servlet处理
+		 * '/*'会拦截所有URL
+		 * 
+		 * DispatcherServlet应该使用'/'
+		 */
+		
 	}
 
 	@Override
@@ -80,8 +93,8 @@ public class CustomWebMvcConfig extends WebMvcConfigurerAdapter {
 		
 		configurer.favorParameter(false)
 				.defaultContentType(MediaType.TEXT_HTML)  
-				.mediaType("xml", MediaType.TEXT_XML)  
-				.mediaType("json", MediaType.APPLICATION_JSON);  
+				.mediaType("xml", MediaType.APPLICATION_XML)  
+				.mediaType("json", MediaType.APPLICATION_JSON); 
 		
 		/**
 		 * 默认配置见：ContentNegotiationManagerFactoryBean
@@ -104,25 +117,79 @@ public class CustomWebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		
-		View jsonView = new MappingJackson2JsonView();  //json视图
+		FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();  //freeMarker视图
+		freeMarkerViewResolver.setCache(true);
+		freeMarkerViewResolver.setPrefix("");
+		freeMarkerViewResolver.setSuffix(".ftl");
+		freeMarkerViewResolver.setContentType("text/html;charset=UTF-8");
+		//freeMarkerViewResolver.setOrder(0);
+		registry.viewResolver(freeMarkerViewResolver);
+		
+		registry.jsp("/WEB-INF/view/jsp/", ".jsp");  //jsp视图, 例如，返回的视图名称是example，它会返回/WEB-INF/jsp/example.jsp给前端
+//		等价于：
+//		InternalResourceViewResolver jspViewResolver = new InternalResourceViewResolver();  //绑定JstlView，DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
+//		jspViewResolver.setPrefix("/WEB-INF/view/jsp/");
+//		jspViewResolver.setSuffix(".jsp");
+//		jspViewResolver.setContentType("text/html;charset=UTF-8");
+////		jspViewResolver.setOrder(0);
+//		registry.viewResolver(jspViewResolver);
+		
+		View jsonView = new MappingJackson2JsonView();  //json视图, MappingJackson2JsonView， DEFAULT_CONTENT_TYPE = "application/json"
 		
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 		marshaller.setClassesToBeBound(MessageVO.class);
-		View xmlView = new MarshallingView(marshaller);  //xml视图
+		View xmlView = new MarshallingView(marshaller);  //xml视图, MarshallingView，DEFAULT_CONTENT_TYPE = "application/xml"
 		
-		registry.enableContentNegotiation(jsonView, xmlView);  //启用ContentNegotiatingViewResolver，默认视图为MappingJackson2JsonView
+		registry.enableContentNegotiation(jsonView, xmlView);  //启用ContentNegotiatingViewResolver，添加默认视图：json与xml
 		
-		
-		
-		registry.jsp("/WEB-INF/view/jsp/", ".jsp");  //例如，返回的视图名称是example，它会返回/WEB-INF/jsp/example.jsp给前端
-//		等价于：
-//		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-//      viewResolver.setPrefix("/WEB-INF/views/");
-//      viewResolver.setSuffix(".jsp");
-//      registry.viewResolver(viewResolver);
-		
-		
-		
+		/**
+		 * 上面一共添加了四种视图，注册到ContentNegotiatingViewResolver中：
+		 * （1）freeMarker视图——》mediaType：text/html
+		 * （2）jsp视图——》mediaType：text/html
+		 * （3）json视图——》mediaType：application/json
+		 * （4）xml视图——》mediaType：application/xml
+		 * 
+		 * 假如handler返回视图名为："example"
+		 * ContentNegotiatingViewResolver会遍历viewResolvers，依次组装出对应的freeMarker视图（有可能组装失败，比如example.ftl文件不存在）与jsp视图
+		 * 然后添加上将默认的json视图、xml视图，得到一组候选视图列表
+		 * 最后根据请求的mediaType(根据路径后缀或accept请求头来确定)，挑选一个合适的view返回
+		 */
 	}
+	
+	@Bean
+	public FreeMarkerConfigurer freeMarkerConfiguer() {
+		FreeMarkerConfigurer freeMarkerConfiguer = new FreeMarkerConfigurer();
+		freeMarkerConfiguer.setTemplateLoaderPath("classpath:/WEB-INF/view/freemarker/");  //默认：classpath:/templates
+		freeMarkerConfiguer.setDefaultEncoding("UTF-8");
+	
+		return freeMarkerConfiguer;
+	}
+	
+//	@Bean  
+//	public FreeMarkerViewResolver freeMarkerViewResolver() {
+//		FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();
+//		freeMarkerViewResolver.setCache(true);
+//		freeMarkerViewResolver.setPrefix("");
+//		freeMarkerViewResolver.setSuffix(".ftl");
+//		freeMarkerViewResolver.setContentType("text/html;charset=UTF-8");
+////		freeMarkerViewResolver.setOrder(-1);
+//		
+//		return freeMarkerViewResolver;
+//	}
+	
+//	@Bean
+//	public InternalResourceViewResolver internalResourceViewResolver() {
+//		InternalResourceViewResolver jspViewResolver = new InternalResourceViewResolver();  //绑定JstlView，DEFAULT_CONTENT_TYPE = "text/html;charset=ISO-8859-1"
+//		jspViewResolver.setPrefix("/WEB-INF/view/jsp/");
+//		jspViewResolver.setSuffix(".jsp");
+//		jspViewResolver.setContentType("text/html;charset=UTF-8");
+////		jspViewResolver.setOrder(0);
+//
+//		return jspViewResolver;
+//	}
+	
+	//在不使用order的情况下，resolver的注册顺序会决定解析view的优先权，比如handler返回的视图名为'example',
+	//同时存在example.jsp与example.ftl，freeMarkerViewResolver先注册则会返回example.ftl，反之，则返回example.jsp
+	
 
 }
