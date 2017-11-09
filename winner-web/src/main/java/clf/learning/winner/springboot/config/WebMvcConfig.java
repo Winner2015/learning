@@ -1,8 +1,13 @@
 package clf.learning.winner.springboot.config;
 
+import java.nio.charset.Charset;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -13,13 +18,13 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import clf.learning.winner.springboot.vo.MessageVO;
+import clf.learning.winner.springboot.web.convertor.ClfConvert;
 import clf.learning.winner.springboot.web.interceptor.AccessLogInterceptor;
 
 /**
@@ -79,8 +84,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		// TODO Auto-generated method stub
-		super.addViewControllers(registry);
+		//适用于不需要controller做数据处理，直接跳转页面的情况
+		registry.addViewController("/welcome").setViewName("welcome");
+		registry.addViewController("/httpMessageConvert").setViewName("httpMessageConvert");
 	}
 	
 	@Override
@@ -92,7 +98,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		 */
 		
 		configurer.favorParameter(false)
-				.defaultContentType(MediaType.TEXT_HTML)  
 				.mediaType("xml", MediaType.APPLICATION_XML)  
 				.mediaType("json", MediaType.APPLICATION_JSON); 
 		
@@ -164,7 +169,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	
 		return freeMarkerConfiguer;
 	}
-	
+
 //	@Bean  
 //	public FreeMarkerViewResolver freeMarkerViewResolver() {
 //		FreeMarkerViewResolver freeMarkerViewResolver = new FreeMarkerViewResolver();
@@ -190,6 +195,23 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	
 	//在不使用order的情况下，resolver的注册顺序会决定解析view的优先权，比如handler返回的视图名为'example',
 	//同时存在example.jsp与example.ftl，freeMarkerViewResolver先注册则会返回example.ftl，反之，则返回example.jsp
-	
 
+	@Override
+	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+		// TODO Auto-generated method stub
+		super.configureMessageConverters(converters);
+	}
+
+	@Override
+	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+		ClfConvert convertor = new ClfConvert();
+		converters.add(convertor);
+	}
+	
+	
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+		// TODO Auto-generated method stub
+		super.addFormatters(registry);
+	}
 }
