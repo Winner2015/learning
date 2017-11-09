@@ -27,7 +27,7 @@ import clf.learning.winner.springboot.web.interceptor.AccessLogInterceptor;
  */
 @Configuration
 @EnableWebMvc // = <mvc:annotation-driven/>，不开启时，Spring Boot默认使用 WebMvcAutoConfiguration中的各种配置
-public class CustomWebMvcConfig extends WebMvcConfigurerAdapter {
+public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	//通过WebMvcConfigurerAdapter可以实现spring-mvc.xml的配置功能
 	

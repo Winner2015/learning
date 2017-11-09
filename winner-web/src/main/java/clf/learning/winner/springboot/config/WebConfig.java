@@ -16,7 +16,7 @@ import clf.learning.winner.springboot.web.servlet.ServletFromRegistrationBean;
   */
 @Configuration
 @ServletComponentScan  //使用@ServletComponentScan注解，Servlet、Filter、Listener 可以直接通过 @WebServlet、@WebFilter、@WebListener 注解自动注册
-public class ServletConfig {
+public class WebConfig {
 	
 	@Bean
 	public ServletRegistrationBean registerServlet() {
