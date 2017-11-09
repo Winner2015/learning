@@ -1,4 +1,4 @@
-package clf.learning.winner.springboot;
+package clf.learning.winner.springboot.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletComponentScan;
