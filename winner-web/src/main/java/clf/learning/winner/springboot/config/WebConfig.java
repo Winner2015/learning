@@ -1,12 +1,10 @@
 package clf.learning.winner.springboot.config;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
 import clf.learning.winner.springboot.web.servlet.ServletFromContextInitializer;
 import clf.learning.winner.springboot.web.servlet.ServletFromRegistrationBean;
