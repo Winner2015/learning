@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -24,7 +25,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import clf.learning.winner.springboot.vo.MessageVO;
-import clf.learning.winner.springboot.web.convertor.ClfConvert;
+import clf.learning.winner.springboot.web.convertor.MessageVOConverter;
 import clf.learning.winner.springboot.web.interceptor.AccessLogInterceptor;
 
 /**
@@ -195,17 +196,25 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	
 	//在不使用order的情况下，resolver的注册顺序会决定解析view的优先权，比如handler返回的视图名为'example',
 	//同时存在example.jsp与example.ftl，freeMarkerViewResolver先注册则会返回example.ftl，反之，则返回example.jsp
-
+	
+	//通过此方法添加转换器，会覆盖默认的转换器列表
 	@Override
 	public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-		// TODO Auto-generated method stub
-		super.configureMessageConverters(converters);
+//		StringHttpMessageConverter stringConvertor = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+//		converters.add(stringConvertor);
+//		
+//		MessageVOConvert messageVOconvertor = new MessageVOConvert();
+//		converters.add(messageVOconvertor);
 	}
-
+	
+	//通过此方法添加转换器，不会覆盖默认的转换器列表，而是追加至原列表
 	@Override
 	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-		ClfConvert convertor = new ClfConvert();
+		MessageVOConverter convertor = new MessageVOConverter();
 		converters.add(convertor);
+		
+		StringHttpMessageConverter stringConvertor = new StringHttpMessageConverter(Charset.forName("UTF-8"));
+		converters.add(stringConvertor);
 	}
 	
 	

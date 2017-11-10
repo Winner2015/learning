@@ -8,28 +8,49 @@
 <script type="text/javascript" src="/webjarslocator/jquery/jquery.min.js"></script>
 </head>
 <body>
-	<input type="button" id="btn" value="按钮"/>
-	
+<textarea rows="3" cols="60" id="sendMsg">沙悟净:大师兄:师傅被妖怪抓走了！</textarea>
+<br/>
+<input type="button" id="sendBtn" value="发送消息"/>
+
+<hr/>
+
+<textarea rows="3" cols="60" id="receiveMsg" disabled></textarea>
+<br/>
+<input type="button" id="receiveBtn" value="接收消息"/>
 	
 <script>
-$(document).ready(function() {
-	
+$(function() {
 
-	$("#btn").click(function() {
+	$("#sendBtn").click(function() {
+		var msg = $("#sendMsg").val();
 		$.ajax({
 			type: "POST",
-			url: "/test/receiveMessage",
-			data: "沙悟净:大师兄:师傅被妖怪捉走了！",
+			url: "/converter/sendMessage",
+			data: $("#sendMsg").val(),
 			contentType: "application/clf",
-			//dataType: "text",
+			dataType: "text",
 			success: function(data) {
 				alert(data);
 			},
-			error: function(XMLHttpRequest, textStatus, errorThrown){  
-				alert(textStatus);
+			error: function(xhr, error) {
+				alert(error);
 			}
 		});
+		
 	});
+	
+	$("#receiveBtn").click(function() {
+		var msg = $("#receiveMsg").val();
+		$.ajax({
+			type: "POST",
+			url: "/converter/receiveMessage",
+			success: function(data) {
+				$("#receiveMsg").val(data);
+			}
+		});
+		
+	});
+
 	
 });
 </script>	
