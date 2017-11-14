@@ -1,4 +1,4 @@
-package clf.learning.winner.springboot.web.formatter;
+package clf.learning.winner.springboot.web.converter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
