@@ -1,6 +1,7 @@
 package clf.learning.winner.springboot.config;
 
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -25,10 +27,12 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.springframework.web.servlet.view.xml.MarshallingView;
 
 import clf.learning.winner.springboot.vo.MessageVO;
-import clf.learning.winner.springboot.web.convertor.MessageVOConverter;
+import clf.learning.winner.springboot.web.converter.MessageVOConverter;
+import clf.learning.winner.springboot.web.formatter.CuntomFormatter;
+import clf.learning.winner.springboot.web.formatter.CustomConverter;
 import clf.learning.winner.springboot.web.interceptor.AccessLogInterceptor;
 
-/**
+/**O
  * @author chenlongfei
  */
 @Configuration
@@ -88,6 +92,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		//适用于不需要controller做数据处理，直接跳转页面的情况
 		registry.addViewController("/welcome").setViewName("welcome");
 		registry.addViewController("/httpMessageConvert").setViewName("httpMessageConvert");
+		registry.addViewController("/formatter").setViewName("formatter");
 	}
 	
 	@Override
@@ -210,17 +215,27 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	//通过此方法添加转换器，不会覆盖默认的转换器列表，而是追加至原列表
 	@Override
 	public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-		MessageVOConverter convertor = new MessageVOConverter();
-		converters.add(convertor);
+		MessageVOConverter messageVOConverter = new MessageVOConverter();
+		converters.add(messageVOConverter);
 		
-		StringHttpMessageConverter stringConvertor = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-		converters.add(stringConvertor);
+		//重置默认converter的属性
+		for (HttpMessageConverter<?> converter : converters) {
+			if (converter instanceof StringHttpMessageConverter) {
+				((StringHttpMessageConverter) converter).setDefaultCharset(Charset.forName("UTF-8"));
+			}
+			if (converter instanceof MappingJackson2HttpMessageConverter) {
+				((MappingJackson2HttpMessageConverter) converter).getObjectMapper().setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+			}
+		}
 	}
 	
 	
 	@Override
 	public void addFormatters(FormatterRegistry registry) {
-		// TODO Auto-generated method stub
-		super.addFormatters(registry);
+		//Formatter与Convertor都是转换接口，都会被适配成GenericConverter，加入到GenericConversionService.converters中
+		
+		registry.addFormatter(new CuntomFormatter());  //Formatter实现了Printer、Parser接口，会被适配成两个GenericConverter：String——》FormatterSampleVO，FormatterSampleVO——》String
+		
+		registry.addConverter(new CustomConverter());  //Convertor会被适配成一个GenericConverter: String——》ConvertorSampleVO
 	}
 }

@@ -1,4 +1,4 @@
-package clf.learning.winner.springboot.web.convertor;
+package clf.learning.winner.springboot.web.converter;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

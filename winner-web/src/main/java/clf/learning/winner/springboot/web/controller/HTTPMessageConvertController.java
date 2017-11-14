@@ -12,10 +12,10 @@ import clf.learning.winner.springboot.vo.MessageVO;
  */
 @Controller
 @RequestMapping("/converter")
-public class MessageVOConvertController {
+public class HTTPMessageConvertController {
 
 	@ResponseBody
-	@RequestMapping(value = "/sendMessage", consumes = { "application/clf" }, produces = { "text/plain;charset=UTF-8" })
+	@RequestMapping(value = "/sendMessage", consumes = { "application/clf" })
 	public String sendMessage(@RequestBody MessageVO message) {
 
 		return String.format("%s收到来自%s发送的消息：%s", message.getTo(), message.getFrom(), message.getContent());
@@ -31,4 +31,5 @@ public class MessageVOConvertController {
 		
 		return message;
 	}
+	
 }
