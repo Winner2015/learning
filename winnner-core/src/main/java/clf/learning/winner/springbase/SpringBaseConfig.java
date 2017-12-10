@@ -17,7 +17,7 @@ public class SpringBaseConfig {
 
 			@Override
 			public String sayHello() {
-				
+				System.out.println("Hello World! ---from SpringBaseConfig");
 				return "Hello World! ---from SpringBaseConfig";
 			}};
 	}
