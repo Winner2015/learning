@@ -7,53 +7,65 @@ public class AVLTree {
 
 	private AVLTreeNode root; // 根结点
 	
-	private void insert(AVLTreeNode tree, long insertValue) {
-		
-	}
-
-	
-	public void insert(long insertValue) {
-		
-		if (root == null) {
-			root = new AVLTreeNode(insertValue, null, null);
-			return;
+	private AVLTreeNode insert(AVLTreeNode subTree, long insertValue) {
+		if (subTree == null) {
+			return new AVLTreeNode(insertValue, null, null); 
 		}
 		
-		if (insertValue < root.getValue()) {
+		if (insertValue < subTree.value) { //插入左子树
 			
+			subTree.left = insert(subTree.left, insertValue);
+			if (unbalanceTest(subTree)) {  //插入后造成失衡
+				if (insertValue < subTree.left.value) { //LL型失衡
+					leftLeftRotation(subTree); 
+				} else { //LR型失衡
+					leftRightRotation(subTree); 
+				}
+			}
+			
+			
+		} else if (insertValue > subTree.value) { //插入右子树
+			
+			subTree.right = insert(subTree.right, insertValue);
+			if (unbalanceTest(subTree)) {  //插入后造成失衡
+				if (insertValue < subTree.right.value) { //RL型失衡
+					rightLeftRotation(subTree); 
+				} else { //RR型失衡
+					rightRightRotation(subTree); 
+				}
+			}
+			
+		} else {
+			throw new RuntimeException("duplicate value: " + insertValue);
 		}
 		
-
-       if (insertValue < tree.value) {    // 应该将key插入到"tree的左子树"的情况
-        tree.left = insert(tree.left, insertValue);
-        // 插入节点后，若AVL树失去平衡，则进行相应的调节。
-        if (height(tree.left) - height(tree.right) == 2) {
-            if (key.compareTo(tree.left.key) < 0)
-                tree = leftLeftRotation(tree);
-            else
-                tree = leftRightRotation(tree);
+		return subTree;
+	}
+	
+    private static int getDepth(AVLTreeNode treeRoot, int initDeep){
+        int leftDeep = initDeep;
+        int rightDeep = initDeep;
+        if(treeRoot.left != null){ 
+               leftDeep = getDepth(treeRoot.left, initDeep++);
         }
-    } else if (cmp > 0) {    // 应该将key插入到"tree的右子树"的情况
-        tree.right = insert(tree.right, key);
-        // 插入节点后，若AVL树失去平衡，则进行相应的调节。
-        if (height(tree.right) - height(tree.left) == 2) {
-            if (key.compareTo(tree.right.key) > 0)
-                tree = rightRightRotation(tree);
-            else
-                tree = rightLeftRotation(tree);
+        if(treeRoot.right != null){ 
+               rightDeep = getDepth(treeRoot.right, initDeep++);
         }
-    } else {    // cmp==0
-        System.out.println("添加失败：不允许添加相同的节点！");
+       
+        return Math.max(leftDeep, rightDeep);
+ }
+    
+    private boolean unbalanceTest(AVLTreeNode treeRoot) {
+    	int leftHeight = getDepth(treeRoot.left, 1);
+		int righHeight = getDepth(treeRoot.right, 1);
+		int diff = Math.abs(leftHeight - righHeight);
+		return diff > 1;
     }
 
-	    tree.height = max( height(tree.left), height(tree.right)) + 1;
+	
 
-	    return tree;
-	}
 
-	public void insert(T key) {
-	    mRoot = insert(mRoot, key);
-	}
+
 	
 	
 	
@@ -69,7 +81,7 @@ public class AVLTree {
 			this.left = left;
 			this.right = right;
 		}
-
+		
 		public long getValue() {
 			return this.value;
 		}
