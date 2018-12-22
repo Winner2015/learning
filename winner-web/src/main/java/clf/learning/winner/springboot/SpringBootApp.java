@@ -16,5 +16,6 @@ public class SpringBootApp {
 		SpringApplication app = new SpringApplication(SpringBootApp.class);
 		app.run(args);
 	}
+
 	
 }
